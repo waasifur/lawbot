@@ -50,7 +50,7 @@ The data reflects legacy IPC and CrPC material. The IPC, CrPC, and Evidence Act 
 
 ## Phase 6: Streamlit app and final report
 
-`app.py` provides a session-based chat interface with starter questions, a glossary and date-tool setting, optional answer details, and source citations when a RAG index is present. Locally, it can load Qwen3-4B-Instruct-2507 and an optional local adapter. On Streamlit Community Cloud, it sends chat prompts to Hugging Face Inference Providers using `HF_TOKEN`, keeping the model weights off the small web host. Set `LAWBOT_API_MODEL` to choose another supported hosted model. Hosted inference usage is billed by the selected provider. Legal model answers without an installed source index are unverified and must be checked against current official sources.
+`app.py` provides a session-based chat interface with starter questions, a glossary and date-tool setting, optional answer details, and source citations when a RAG index is present. It defaults to the compact Qwen3-0.6B model, which runs locally on CPU without an API key or hosted inference charges. You can set `LAWBOT_BASE_MODEL` to use a larger model such as `Qwen/Qwen3-4B-Instruct-2507` on a machine with enough memory. The compact model is slower on CPU and less capable on complex questions. Legal model answers without an installed source index are unverified and must be checked against current official sources.
 
 For local inference, install the app dependencies and a PyTorch build suited to your machine, then launch:
 
@@ -73,4 +73,4 @@ Without a token, case-law search uses the bundled Supreme Court summary paraphra
 
 ### Streamlit Community Cloud
 
-The root `requirements.txt` contains only the web app dependencies. After publishing the repository, deploy `app.py` from the `main` branch. In the app's **Manage app → Settings → Secrets**, add `HF_TOKEN = "hf_…"` using a Hugging Face user token with **Inference Providers** permission. Never commit the token. Requests are sent to Hugging Face Inference Providers; usage is billed to the Hugging Face account. If the token is not configured, the app can load but hosted model answers are unavailable.
+The root `requirements.txt` installs CPU-only PyTorch and the web app dependencies. After publishing the repository, deploy `app.py` from the `main` branch. The app downloads Qwen3-0.6B on its first question and runs it on the Community Cloud CPU; no Hugging Face token or payment setup is required. The first answer may take longer while the model downloads. Community Cloud has limited memory, so the app uses a compact model; answers to difficult questions may be less reliable than a larger hosted model. Check legal details against current official sources.

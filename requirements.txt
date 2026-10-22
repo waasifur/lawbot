@@ -1,3 +1,7 @@
-# Streamlit Community Cloud web app. Model inference is hosted via HF_TOKEN.
+# Streamlit Community Cloud: CPU-only inference with a compact local model.
+--extra-index-url https://download.pytorch.org/whl/cpu
 streamlit==1.64.0
+torch==2.10.0+cpu
+transformers==4.57.6
+accelerate==1.11.0
 requests==2.32.5
