@@ -13,6 +13,7 @@ import streamlit as st
 PROJECT_DIR = Path(__file__).resolve().parent
 DISCLAIMER = "LawBot is for educational use only and is not legal advice."
 BASE_MODEL = os.environ.get("LAWBOT_BASE_MODEL", "Qwen/Qwen3-4B-Instruct-2507")
+API_MODEL = os.environ.get("LAWBOT_API_MODEL", "Qwen/Qwen3-4B-Instruct-2507:nscale")
 os.environ.setdefault("HF_HOME", str(PROJECT_DIR / "models" / "hf_cache"))
 RAG_INDEX_DIR = PROJECT_DIR / "data" / "rag_corpus" / "faiss_index"
 RAG_INDEX_READY = (RAG_INDEX_DIR / "index.faiss").exists() and (RAG_INDEX_DIR / "index.pkl").exists()
@@ -54,12 +55,56 @@ def load_language_model() -> tuple[Any, Any, threading.Lock]:
     return model, tokenizer, threading.Lock()
 
 
+def get_hf_token() -> str:
+    """Read the Hugging Face token from environment variables or Streamlit secrets."""
+    token = os.environ.get("HF_TOKEN", "").strip()
+    if token:
+        return token
+    try:
+        return str(st.secrets.get("HF_TOKEN", "")).strip()
+    except Exception:
+        return ""
+
+
+def generate_with_hosted_model(messages: list[dict[str, str]], max_new_tokens: int) -> str:
+    """Generate through Hugging Face Inference Providers for memory-limited hosts."""
+    import requests
+
+    token = get_hf_token()
+    if not token:
+        raise RuntimeError(
+            "Hosted AI is not configured. Add HF_TOKEN in Streamlit app settings → Secrets."
+        )
+    try:
+        response = requests.post(
+            "https://router.huggingface.co/v1/chat/completions",
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            json={
+                "model": API_MODEL,
+                "messages": messages,
+                "max_tokens": max_new_tokens,
+                "temperature": 0.2,
+                "stream": False,
+            },
+            timeout=120,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        return str(payload["choices"][0]["message"]["content"]).strip()
+    except requests.RequestException as exc:
+        status = getattr(getattr(exc, "response", None), "status_code", None)
+        detail = f" (HTTP {status})" if status else ""
+        raise RuntimeError(
+            "The hosted model request failed" + detail +
+            ". Check that HF_TOKEN has Inference Providers permission and that the model is available."
+        ) from exc
+    except (KeyError, IndexError, TypeError, ValueError) as exc:
+        raise RuntimeError("The hosted model returned an unexpected response. Try again shortly.") from exc
+
+
 def generate_text(prompt: str, history: list[dict[str, str]] | None = None,
                   system: str | None = None, max_new_tokens: int = 512) -> str:
     """Generate a completion with a short window of conversational context."""
-    import torch
-
-    model, tokenizer, generation_lock = load_language_model()
     if system is None:
         complex_request = re.search(
             r"\b(compare|contrast|analy[sz]e|step[- ]by[- ]step|in detail|comprehensive|multiple|pros and cons|explain how|what are the differences)\b",
@@ -76,6 +121,20 @@ def generate_text(prompt: str, history: list[dict[str, str]] | None = None,
                  "general information from legal advice. If you are unsure, say what is uncertain."}]
     messages.extend(history[-6:] if history else [])
     messages.append({"role": "user", "content": prompt})
+    if get_hf_token():
+        return generate_with_hosted_model(messages, max_new_tokens)
+
+    # Community Cloud uses the small web-only requirements file and has no local
+    # model runtime. Local development can still use the existing Transformers path.
+    import importlib.util
+    if importlib.util.find_spec("torch") is None:
+        raise RuntimeError(
+            "Hosted AI is not configured. In Streamlit, open Manage app → Settings → Secrets "
+            'and add HF_TOKEN = "your Hugging Face token".'
+        )
+    import torch
+
+    model, tokenizer, generation_lock = load_language_model()
     template_options = {"tokenize": False, "add_generation_prompt": True}
     if "Qwen3" in BASE_MODEL:
         template_options["enable_thinking"] = False
@@ -230,7 +289,10 @@ with st.sidebar:
         top_k = st.slider("Source passages", min_value=3, max_value=10, value=5) if use_rag else 5
     else:
         use_rag, top_k = False, 5
-        st.caption("AI answers are generated locally. Verify legal details with current official sources.")
+        if get_hf_token():
+            st.caption("AI answers use a hosted model. Verify legal details with current official sources.")
+        else:
+            st.caption("Hosted AI needs an HF_TOKEN secret. Verify legal details with current official sources.")
     st.divider()
     st.caption("Educational information only · Not legal advice")
     if st.button("＋  New conversation", use_container_width=True):
@@ -244,7 +306,7 @@ st.markdown("""
 <div class="hero"><span class="eyebrow">INDIAN LAW · EVERYDAY QUESTIONS</span>
 <h1>Understand the law,<br/>one question at a time.</h1>
 <p>Ask a basic question or explore a complex topic. Get a clear explanation in plain language.</p>
-<div class="status-row"><span class="status-pill">✦ &nbsp;Local AI assistant</span><span class="status-pill">◉ &nbsp;Available on this device</span></div></div>
+<div class="status-row"><span class="status-pill">✦ &nbsp;Indian law · general Q&amp;A</span><span class="status-pill">◉ &nbsp;Hosted model when configured</span></div></div>
 """, unsafe_allow_html=True)
 st.caption("AI answers can be mistaken. Verify legal details with current official sources.")
 
@@ -280,6 +342,9 @@ if prompt:
         with st.spinner("Thinking…"):
             try:
                 result = get_agent(use_rag, tools_enabled, top_k).run(prompt, history=history)
+            except RuntimeError as exc:
+                result = {"answer": str(exc), "route": "error", "grounding": "service_unavailable",
+                          "citations": [], "tool_trace": []}
             except Exception:
                 result = {"answer": "I hit a technical problem while preparing that answer. Please try again in a moment.",
                           "route": "error", "grounding": "service_unavailable", "citations": [], "tool_trace": []}

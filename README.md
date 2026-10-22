@@ -14,7 +14,7 @@ This creates `data/processed/lawbot_cleaned.jsonl`, `train.jsonl`, `val.jsonl`, 
 
 ## Phase 2: Fine-tuning (Colab/Kaggle)
 
-Open `notebooks/finetune_lawbot.ipynb` in Colab or Kaggle, enable a T4 GPU, and make the `lawbot/` project folder available in the runtime. The notebook installs the pinned Phase 2 packages from `requirements.txt` while retaining the runtime's CUDA-matched PyTorch installation. Set `LAWBOT_PROJECT_DIR` if automatic project discovery does not find the repository. The default is Qwen2.5-1.5B-Instruct with 4-bit QLoRA; the notebook config also includes Phi-3-mini and Mistral-7B choices.
+Open `notebooks/finetune_lawbot.ipynb` in Colab or Kaggle, enable a T4 GPU, and make the `lawbot/` project folder available in the runtime. The notebook installs the pinned Phase 2 packages from `requirements-training.txt` while retaining the runtime's CUDA-matched PyTorch installation. Set `LAWBOT_PROJECT_DIR` if automatic project discovery does not find the repository. The default is Qwen2.5-1.5B-Instruct with 4-bit QLoRA; the notebook config also includes Phi-3-mini and Mistral-7B choices.
 
 If the runtime throws a `libtorchaudio.so`/`undefined symbol` error, it is a broken `torch`/`torchaudio` ABI mismatch rather than a model bug. The notebook automatically reinstalls a matching `torchaudio` build for the active `torch` version before importing the training stack; when running locally, use a supported CUDA runtime or reinstall `torch` and `torchaudio` together from the same release line instead of mixing wheels.
 
@@ -32,7 +32,7 @@ On successful execution, the notebook writes `reports/chunk_statistics.png` and 
 
 ## Phase 4: Optional GRPO/RLHF experiment
 
-Open `notebooks/reward_model_lawbot.ipynb` in Colab/Kaggle with a T4 GPU and run it in order. The notebook uses the pinned TRL/Unsloth stack in `requirements.txt`, creates 40 base-Qwen rejected-answer candidates, then trains a short 4-bit QLoRA GRPO run from the Phase 2 adapter when available (otherwise from the base model). Its four rule-based reward functions score citation overlap, answer-text similarity, length/format, and abstention on eight synthetic out-of-scope prompts.
+Open `notebooks/reward_model_lawbot.ipynb` in Colab/Kaggle with a T4 GPU and run it in order. The notebook uses the pinned TRL/Unsloth stack in `requirements-training.txt`, creates 40 base-Qwen rejected-answer candidates, then trains a short 4-bit QLoRA GRPO run from the Phase 2 adapter when available (otherwise from the base model). Its four rule-based reward functions score citation overlap, answer-text similarity, length/format, and abstention on eight synthetic out-of-scope prompts.
 
 `reports/preference_seed.csv` contains 40 seeded prompt/chosen pairs sampled from training data; rejected responses are blank until the notebook generates them. The notebook writes `reports/preference_candidates.csv`, where all generated pairs remain marked for manual review. The GRPO update uses the reference-bearing training examples directly with rule-based rewards; it does not learn from the preference CSV. This keeps the requested preference review artifact distinct from the GRPO objective. After the GPU run, the notebook compares pre/post validation loss and perplexity, ROUGE-L, BERTScore, citation accuracy, and source-wise ROUGE-L in `reports/grpo_eval_results.md`.
 
@@ -50,9 +50,9 @@ The data reflects legacy IPC and CrPC material. The IPC, CrPC, and Evidence Act 
 
 ## Phase 6: Streamlit app and final report
 
-`app.py` provides a session-based chat interface with starter questions, a glossary and date-tool setting, optional answer details, and source citations when a RAG index is present. It loads Qwen3-4B-Instruct-2507 in 4-bit mode on CUDA at first use, then prefers a local GRPO adapter, then a Phase 2 adapter if found. Set `LAWBOT_BASE_MODEL` to select a compatible base model, or `LAWBOT_ADAPTER_DIR` to point to an adapter directory containing `adapter_config.json`. The model and RAG index are cached for the Streamlit process. Legal model answers without an installed source index are unverified and must be checked against current official sources.
+`app.py` provides a session-based chat interface with starter questions, a glossary and date-tool setting, optional answer details, and source citations when a RAG index is present. Locally, it can load Qwen3-4B-Instruct-2507 and an optional local adapter. On Streamlit Community Cloud, it sends chat prompts to Hugging Face Inference Providers using `HF_TOKEN`, keeping the model weights off the small web host. Set `LAWBOT_API_MODEL` to choose another supported hosted model. Hosted inference usage is billed by the selected provider. Legal model answers without an installed source index are unverified and must be checked against current official sources.
 
-From the project directory, install the project dependencies and launch:
+For local inference, install the app dependencies and a PyTorch build suited to your machine, then launch:
 
 ```powershell
 python -m venv .venv
@@ -70,3 +70,7 @@ streamlit run app.py
 ```
 
 Without a token, case-law search uses the bundled Supreme Court summary paraphrases where relevant and labels that fallback in its trace. Do not treat the summaries as full judgments. The app's date calculator is illustrative arithmetic only. Read [`reports/final_report.md`](reports/final_report.md) for scope, evaluation status, limitations, and next steps. Training, retrieval evaluation, and GRPO results remain pending GPU/network-enabled runs.
+
+### Streamlit Community Cloud
+
+The root `requirements.txt` contains only the web app dependencies. After publishing the repository, deploy `app.py` from the `main` branch. In the app's **Manage app → Settings → Secrets**, add `HF_TOKEN = "hf_…"` using a Hugging Face user token with **Inference Providers** permission. Never commit the token. Requests are sent to Hugging Face Inference Providers; usage is billed to the Hugging Face account. If the token is not configured, the app can load but hosted model answers are unavailable.
