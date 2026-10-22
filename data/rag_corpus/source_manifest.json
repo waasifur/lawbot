@@ -1,0 +1,32 @@
+{
+  "legal_notice": "These are historical IPC/CrPC/Constitution source texts for an educational prototype. IPC, CrPC and the Evidence Act were replaced by BNS, BNSS and BSA effective 1 July 2024. Verify current law from current primary sources.",
+  "pdf_documents": [
+    {
+      "title": "The Indian Penal Code, 1860",
+      "act": "IPC",
+      "source_url": "https://www.indiacode.nic.in/bitstream/123456789/11091/1/the_indian_penal_code%2C_1860.pdf",
+      "filename": "ipc.pdf",
+      "source_host": "www.indiacode.nic.in"
+    },
+    {
+      "title": "The Code of Criminal Procedure, 1973",
+      "act": "CrPC",
+      "source_url": "https://www.indiacode.nic.in/bitstream/123456789/15269/1/crpc.pdf",
+      "filename": "crpc.pdf",
+      "source_host": "www.indiacode.nic.in"
+    },
+    {
+      "title": "The Constitution of India",
+      "act": "Constitution",
+      "source_url": "https://www.indiacode.nic.in/bitstream/123456789/15240/1/constitution_of_india.pdf",
+      "filename": "constitution_of_india.pdf",
+      "source_host": "www.indiacode.nic.in"
+    }
+  ],
+  "judgment_summary_source": {
+    "title": "Landmark Judgment Summaries",
+    "source_url": "https://www.sci.gov.in/landmark-judgment-summaries/",
+    "source_host": "www.sci.gov.in",
+    "notice": "The Supreme Court's page states that its summaries are explanatory aids, are not part of the Court's decision or reasons, and are not for use in legal proceedings."
+  }
+}

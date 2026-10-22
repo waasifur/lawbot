@@ -1,0 +1,94 @@
+{
+  "notice": "Educational plain-language explanations only. These are not statutory definitions, and precise meaning depends on the governing Act, jurisdiction, and case law.",
+  "terms": {
+    "acquittal": {
+      "definition": "A court's formal finding that the prosecution has not established the accused person's guilt to the required standard in that proceeding.",
+      "source": "LawBot educational glossary; check the applicable judgment and statute."
+    },
+    "appeal": {
+      "definition": "A request to a higher or designated court or authority to review a decision, as permitted by the governing law.",
+      "source": "LawBot educational glossary; appeal rights and procedure depend on statute."
+    },
+    "bail": {
+      "definition": "Conditional release from custody while a case is pending, subject to the applicable law and conditions imposed by the competent court or authority.",
+      "source": "LawBot educational glossary; check the current criminal procedure statute and case law."
+    },
+    "bailable offence": {
+      "definition": "An offence classified as bailable under the applicable criminal procedure law; the classification and release procedure come from statute.",
+      "source": "LawBot educational glossary; verify the current schedule and statute."
+    },
+    "burden of proof": {
+      "definition": "The obligation assigned by law to establish a fact or issue to the required standard of proof.",
+      "source": "LawBot educational glossary; the allocation and standard depend on the proceeding and applicable evidence law."
+    },
+    "charge": {
+      "definition": "A formal statement of the accusation or offence alleged in a criminal proceeding, framed under the applicable procedure.",
+      "source": "LawBot educational glossary; current procedure law controls."
+    },
+    "cognizable offence": {
+      "definition": "An offence classified by criminal procedure law as cognizable, with specified powers for police investigation and arrest subject to statutory requirements.",
+      "source": "LawBot educational glossary; verify the current procedure statute and offence classification."
+    },
+    "contract": {
+      "definition": "An agreement that the applicable law recognizes as creating legally enforceable obligations.",
+      "source": "LawBot educational glossary; formation and enforceability depend on the governing law and facts."
+    },
+    "consideration": {
+      "definition": "Under section 2(d) of the Indian Contract Act, 1872, consideration includes an act, abstinence, or promise by the promisee or another person, done at the promisor's desire. This is a simplified explanation of the statutory wording.",
+      "source": "Indian Contract Act, 1872, section 2(d) (India Code)",
+      "source_url": "https://www.indiacode.nic.in/handle/123456789/12845"
+    },
+    "conviction": {
+      "definition": "A court's formal finding that an accused person is guilty of an offence in a particular proceeding.",
+      "source": "LawBot educational glossary; consult the judgment and applicable law."
+    },
+    "defendant": {
+      "definition": "A person or entity against whom a civil claim or other proceeding is brought; terminology can vary by proceeding.",
+      "source": "LawBot educational glossary; procedural context matters."
+    },
+    "evidence": {
+      "definition": "Material that the applicable law permits a court or decision-maker to consider when determining facts in a proceeding.",
+      "source": "LawBot educational glossary; admissibility and weight depend on current evidence law."
+    },
+    "jurisdiction": {
+      "definition": "The legal authority of a court or other body to hear a matter or make a decision, as defined by the Constitution and statutes.",
+      "source": "LawBot educational glossary; check the governing law and facts."
+    },
+    "limitation period": {
+      "definition": "A time limit set by law for bringing a proceeding or taking a procedural step, subject to statutory rules and exceptions.",
+      "source": "LawBot educational glossary; a date calculator cannot determine the applicable legal period or exceptions."
+    },
+    "mens rea": {
+      "definition": "A Latin term commonly used for the mental element associated with an offence; the required mental state is defined by the applicable offence and case law.",
+      "source": "LawBot educational glossary; check the exact statutory language and authorities."
+    },
+    "non-bailable offence": {
+      "definition": "An offence classified as non-bailable under criminal procedure law; bail may still be considered under the applicable statutory test.",
+      "source": "LawBot educational glossary; verify current statute and case law."
+    },
+    "non-cognizable offence": {
+      "definition": "An offence classified as non-cognizable under criminal procedure law, for which police investigation is subject to the statutory conditions and permissions.",
+      "source": "LawBot educational glossary; verify the current procedure statute."
+    },
+    "plaintiff": {
+      "definition": "The person or entity that starts a civil suit by bringing a claim before a court.",
+      "source": "LawBot educational glossary; procedural terminology may vary."
+    },
+    "precedent": {
+      "definition": "A prior judicial decision that may guide or bind a later court depending on the court hierarchy, issue, and applicable doctrine.",
+      "source": "LawBot educational glossary; verify the judgment and its precedential status."
+    },
+    "prosecution": {
+      "definition": "The state or other authorized party responsible for presenting a criminal case against an accused person.",
+      "source": "LawBot educational glossary; roles and powers depend on the governing law."
+    },
+    "remand": {
+      "definition": "An order sending a person in custody or a matter back to a designated authority or court, as permitted by applicable law.",
+      "source": "LawBot educational glossary; the meaning depends on procedural context."
+    },
+    "writ": {
+      "definition": "A formal order issued by a court exercising constitutional or statutory authority; the available writs and requirements depend on the governing provision and facts.",
+      "source": "LawBot educational glossary; consult the applicable constitutional provision and judgments."
+    }
+  }
+}

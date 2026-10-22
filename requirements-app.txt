@@ -1,0 +1,7 @@
+# Streamlit inference interface. Install a PyTorch build appropriate for the host separately.
+streamlit==1.64.0
+transformers==4.57.6
+accelerate==1.11.0
+peft==0.18.0
+bitsandbytes==0.48.1
+requests==2.32.5

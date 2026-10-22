@@ -1,0 +1,24 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Downloaded model weights, adapters, and generated indexes
+models/
+adapters/
+runs/
+data/rag_corpus/faiss_index/
+
+# Local credentials and editor/OS files
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+
